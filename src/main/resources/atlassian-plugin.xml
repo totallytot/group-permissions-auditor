@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="group-permissions-auditor"/>
+  <!-- add our web resources -->
+  <web-resource key="group-permissions-auditor-resources" name="group-permissions-auditor Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+    <dependency>com.atlassian.auiplugin:aui-flag</dependency>
+    <resource type="download" name="group-permissions-auditor.css" location="/css/group-permissions-auditor.css"/>
+    <resource type="download" name="group-permissions-auditor.js" location="/js/group-permissions-auditor.js"/>
+    <resource type="download" name="images/" location="/images"/>
+    <context>atl.admin</context>
+  </web-resource>
+  <ao key="ao-module">
+    <description>The module configuring the Active Objects service used by this plugin</description>
+    <entity>com.totallytot.ao.MonitoredGroup</entity>
+    <entity>com.totallytot.ao.IgnoredSpace</entity>
+  </ao>
+  <job-config name="Group Permissions Audit Job" key="auditJobConfig">
+    <job key="auditJob" perClusterJob="true"/>
+    <schedule cron-expression="0 0 0 * * ?" jitterSecs="10"/>
+    <managed editable="true" keepingHistory="true" canRunAdhoc="true" canDisable="true"/>
+  </job-config>
+  <servlet name="Configuration Servlet" i18n-name-key="configuration-servlet.name" key="configuration-servlet"
+           class="com.totallytot.servlet.Configuration">
+    <description key="conf.description">Plugin Admin Servlet</description>
+    <url-pattern>/groupaudit</url-pattern>
+  </servlet>
+  <web-item name="AdminWebItem" i18n-name-key="admin-web-item.name" key="admin-web-item"
+            section="system.admin/configuration" weight="40">
+    <description key="admin-web-item.description">Link for Admin Servlet</description>
+    <label key="Group Permissions Audit"/>
+    <link linkId="admin-web-item-link">/plugins/servlet/groupaudit</link>
+  </web-item>
+</atlassian-plugin>
