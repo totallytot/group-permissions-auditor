@@ -15,10 +15,10 @@
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <dependency>com.atlassian.auiplugin:aui-select2</dependency>
     <dependency>com.atlassian.auiplugin:aui-flag</dependency>
+    <dependency>com.atlassian.auiplugin:aui-toggle</dependency>
     <resource type="download" name="group-permissions-auditor.css" location="/css/group-permissions-auditor.css"/>
     <resource type="download" name="group-permissions-auditor.js" location="/js/group-permissions-auditor.js"/>
     <resource type="download" name="images/" location="/images"/>
-    <context>atl.admin</context>
   </web-resource>
   <ao key="ao-module">
     <description>The module configuring the Active Objects service used by this plugin</description>

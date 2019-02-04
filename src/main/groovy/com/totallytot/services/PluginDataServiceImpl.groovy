@@ -3,6 +3,7 @@ package com.totallytot.services
 import com.atlassian.activeobjects.external.ActiveObjects
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory
 import com.atlassian.sal.api.transaction.TransactionCallback
 import com.totallytot.ao.IgnoredSpace
 import com.totallytot.ao.MonitoredGroup
@@ -20,13 +21,17 @@ import static com.google.common.base.Preconditions.checkNotNull
 class PluginDataServiceImpl implements PluginDataService{
 
     private static final Logger log = Logger.getLogger(PluginDataServiceImpl.class)
+    private static final String PLUGIN_STORAGE_KEY = "com.totallytot"
 
     @ComponentImport
     private final ActiveObjects ao
+    @ComponentImport
+    private final PluginSettingsFactory pluginSettingsFactory
 
     @Inject
-    PluginDataServiceImpl(ActiveObjects ao) {
+    PluginDataServiceImpl(ActiveObjects ao, PluginSettingsFactory pluginSettingsFactory) {
         this.ao = checkNotNull(ao)
+        this.pluginSettingsFactory = pluginSettingsFactory
     }
 
     @Override
@@ -95,5 +100,18 @@ class PluginDataServiceImpl implements PluginDataService{
             }
             null
         })
+    }
+
+    @Override
+    boolean isEmailActive() {
+        def pluginSettings = pluginSettingsFactory.createGlobalSettings()
+        if (!pluginSettings.get(PLUGIN_STORAGE_KEY + ".email")) pluginSettings.put(PLUGIN_STORAGE_KEY + ".email", "false")
+        return pluginSettings.get(PLUGIN_STORAGE_KEY + ".timeframe") as boolean
+    }
+
+    @Override
+    void activateEmail(boolean active) {
+        def pluginSettings = pluginSettingsFactory.createGlobalSettings()
+        pluginSettings.put(PLUGIN_STORAGE_KEY + ".email", active.toString())
     }
 }

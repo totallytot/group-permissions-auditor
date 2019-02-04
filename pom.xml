@@ -79,6 +79,7 @@
                 <configuration>
                     <productVersion>${confluence.version}</productVersion>
                     <productDataVersion>${confluence.data.version}</productDataVersion>
+                    <jvmArgs>-Xmx1512m -Xmx2000m</jvmArgs>
                     <enableQuickReload>true</enableQuickReload>
                     <enableFastdev>false</enableFastdev>
                     <!-- See here for an explanation of default instructions: -->

@@ -13,4 +13,8 @@ interface PluginDataService {
     Set<String> getMonitoredGroups()
 
     void removeMonitoredGroup(String group)
+
+    boolean isEmailActive()
+
+    void activateEmail(boolean active)
 }

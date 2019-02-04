@@ -27,6 +27,17 @@
                 </select>
             </div>
 
+            <div class="field-group-audit" id="email-receivers">
+                <label for="email-receivers">Select mail receivers:</label>
+                <select class="multi-select" multiple="multiple" size="8">
+                </select>
+            </div>
+
+            <div class="field-group-audit">
+                <aui-label for="outgoing-email">Send outgoing email</aui-label>
+                <aui-toggle id="outgoing-email" label="Send outgoing email" checked tooltip-on="Enabled" tooltip-off="Disabled"></aui-toggle>
+            </div>
+
             <div class="btn">
                 <button class="aui-button aui-button-primary" id="save-button">Save</button>
             </div>

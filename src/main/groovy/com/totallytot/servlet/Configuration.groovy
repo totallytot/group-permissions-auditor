@@ -8,6 +8,7 @@ import com.atlassian.plugin.spring.scanner.annotation.component.Scanned
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport
 import com.atlassian.sal.api.auth.LoginUriProvider
 import com.atlassian.sal.api.user.UserManager
+import com.atlassian.webresource.api.assembler.PageBuilderService
 import com.totallytot.services.PluginConfigurationService
 
 import javax.inject.Inject
@@ -30,16 +31,20 @@ class Configuration extends HttpServlet {
     private final SpaceManager spaceManager
     @ComponentImport
     private final TemplateRenderer renderer
+    @ComponentImport
+    private PageBuilderService pageBuilderService
 
     @Inject
     Configuration(LoginUriProvider loginUriProvider, UserManager userManager, UserAccessor userAccessor,
-    SpaceManager spaceManager, TemplateRenderer renderer, PluginConfigurationService pluginConfigurationService) {
+    SpaceManager spaceManager, TemplateRenderer renderer, PluginConfigurationService pluginConfigurationService,
+                  PageBuilderService pageBuilderService) {
         this.loginUriProvider = loginUriProvider
         this.userManager = userManager
         this.userAccessor = userAccessor
         this.spaceManager = spaceManager
         this.renderer = renderer
         this.pluginConfigurationService = pluginConfigurationService
+        this.pageBuilderService = pageBuilderService
     }
 
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -62,6 +67,8 @@ class Configuration extends HttpServlet {
             redirectToLogin(req, resp)
             return
         }
+
+        pageBuilderService.assembler().resources().requireWebResource("com.totallytot.group-permissions-auditor:group-permissions-auditor-resources")
 
         //load data for context from DB
         def context = pluginConfigurationService.configurationData

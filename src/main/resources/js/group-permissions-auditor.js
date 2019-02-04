@@ -1,5 +1,14 @@
 AJS.toInit(function () {
     AJS.$(".multi-select").auiSelect2();
+    //AJS.$("#outgoing-email").auiToggle();
+
+    var toggle = document.getElementById("outgoing-email");
+    var isChecked = toggle.checked;
+
+    AJS.$(document).on('change', toggle, function () {
+        if (toggle.checked === false) AJS.$("#email-receivers").hide();
+        else AJS.$("#email-receivers").show();
+    });
 
     //will store all data
     var dataObject = {};

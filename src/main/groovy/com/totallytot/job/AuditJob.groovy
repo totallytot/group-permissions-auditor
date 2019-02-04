@@ -55,7 +55,7 @@ class AuditJob implements JobRunner {
             spacesForAudit.each { space ->
                 def permissionsToRemove = space.getPermissions().findAll { permission ->
                     permission.isGroupPermission() && monitoredGroups.contains(permission.getGroup()) }
-                0.upto(permissionsToRemove.size() - 1) { space.removePermission(permissionsToRemove.get(it)) }
+                if (permissionsToRemove) 0.upto(permissionsToRemove.size() - 1) { space.removePermission(permissionsToRemove.get(it)) }
             }
         }
     }
