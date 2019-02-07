@@ -5,3 +5,8 @@
 #message-info-audit {
     width: 750px;
 }
+
+#toggle-permission {
+    margin-bottom: 10px;
+    margin-top: 5px;
+}

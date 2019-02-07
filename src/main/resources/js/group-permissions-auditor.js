@@ -1,13 +1,18 @@
+
+
 AJS.toInit(function () {
     AJS.$(".multi-select").auiSelect2();
-    //AJS.$("#outgoing-email").auiToggle();
 
-    var toggle = document.getElementById("outgoing-email");
-    var isChecked = toggle.checked;
-
-    AJS.$(document).on('change', toggle, function () {
-        if (toggle.checked === false) AJS.$("#email-receivers").hide();
+    //toggle behaviour
+    var toggleMail = document.getElementById("outgoing-email");
+    AJS.$(document).on('change', toggleMail, function () {
+        dataObject.email = toggleMail.checked;
+        if (toggleMail.checked === false) AJS.$("#email-receivers").hide();
         else AJS.$("#email-receivers").show();
+    });
+    var togglePermission = document.getElementById("permission-removal");
+    AJS.$(document).on('change', togglePermission, function () {
+        dataObject.permission = togglePermission.checked;
     });
 
     //will store all data
@@ -16,14 +21,19 @@ AJS.toInit(function () {
     dataObject.spacesToDel = [];
     dataObject.groupsToAdd = [];
     dataObject.groupsToDel = [];
+    dataObject.userNamesToAdd = [];
+    dataObject.userNamesToDel = [];
 
     function cleanDataObject() {
         dataObject.spacesToAdd = [];
         dataObject.spacesToDel = [];
         dataObject.groupsToAdd = [];
         dataObject.groupsToDel = [];
+        dataObject.userNamesToAdd = [];
+        dataObject.userNamesToDel = [];
     }
 
+    //populate data object
     AJS.$(document).on('change', '#ignored-spaces', function (e) {
         if (e.added) {
             console.log('add ' + e.added.id);
@@ -53,6 +63,21 @@ AJS.toInit(function () {
         }
     });
 
+    AJS.$(document).on('change', '#email-receivers', function (e) {
+        if (e.added) {
+            console.log('add ' + e.added.id);
+            if (dataObject.userNamesToDel.includes(e.added.id)) dataObject.userNamesToDel.splice(dataObject.userNamesToDel.indexOf(e.added.id), 1);
+            else dataObject.userNamesToAdd.push(e.added.id);
+
+        }
+        if (e.removed) {
+            if (dataObject.userNamesToAdd.includes(e.removed.id)) dataObject.userNamesToAdd.splice(dataObject.userNamesToAdd.indexOf(e.removed.id), 1);
+            else dataObject.userNamesToDel.push(e.removed.id);
+            console.log('remove ' + e.removed.id);
+        }
+    });
+
+    //AJAX and save button behaviour
     AJS.$("#save-button").click(function (e) {
         e.preventDefault();
         var ignoredSpaces = AJS.$("#ignored-spaces").val();
@@ -73,7 +98,6 @@ AJS.toInit(function () {
                 data: JSON.stringify(dataObject),
                 success: function (resp) {
                     console.log("SUCCESS");
-                    console.log(resp);
                     console.log(JSON.stringify(dataObject));
                     AJS.flag({
                         type: 'success',

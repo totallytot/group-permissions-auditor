@@ -5,6 +5,7 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory
 import com.atlassian.sal.api.transaction.TransactionCallback
+import com.totallytot.ao.UserName
 import com.totallytot.ao.IgnoredSpace
 import com.totallytot.ao.MonitoredGroup
 
@@ -103,15 +104,62 @@ class PluginDataServiceImpl implements PluginDataService{
     }
 
     @Override
-    boolean isEmailActive() {
+    Boolean isEmailActive() {
         def pluginSettings = pluginSettingsFactory.createGlobalSettings()
         if (!pluginSettings.get(PLUGIN_STORAGE_KEY + ".email")) pluginSettings.put(PLUGIN_STORAGE_KEY + ".email", "false")
-        return pluginSettings.get(PLUGIN_STORAGE_KEY + ".timeframe") as boolean
+        Boolean.parseBoolean(pluginSettings.get(PLUGIN_STORAGE_KEY + ".email").toString())
     }
 
     @Override
-    void activateEmail(boolean active) {
+    void activateEmail(Boolean active) {
         def pluginSettings = pluginSettingsFactory.createGlobalSettings()
         pluginSettings.put(PLUGIN_STORAGE_KEY + ".email", active.toString())
+    }
+
+    @Override
+    Boolean isPermissionRemovalActive() {
+        def pluginSettings = pluginSettingsFactory.createGlobalSettings()
+        if (!pluginSettings.get(PLUGIN_STORAGE_KEY + ".permission")) pluginSettings.put(PLUGIN_STORAGE_KEY + ".permission", "false")
+        Boolean.parseBoolean(pluginSettings.get(PLUGIN_STORAGE_KEY + ".permission").toString())
+    }
+
+    @Override
+    void activatePermissionRemoval(Boolean active) {
+        def pluginSettings = pluginSettingsFactory.createGlobalSettings()
+        pluginSettings.put(PLUGIN_STORAGE_KEY + ".permission", active.toString())
+    }
+
+    @Override
+    void setNotificationReceiver(String userName) {
+        ao.executeInTransaction({
+            final UserName mail = ao.create(UserName.class)
+            mail.setUserName(userName)
+            mail.save()
+            mail
+        })
+    }
+
+    @Override
+    Set<String> getNotificationReceivers() {
+        def mails = new HashSet<>()
+        ao.executeInTransaction((TransactionCallback<Void>) {
+            ao.find(UserName.class).each {mails << it.userName}
+            null
+        })
+        mails
+    }
+
+    @Override
+    void removeNotificationReceiver(String userName) {
+        ao.executeInTransaction((TransactionCallback<Void>){
+            ao.find(UserName.class, "USER_NAME = ?", userName).each {
+                try {
+                    it.getEntityManager().delete(it)
+                } catch (SQLException e) {
+                    log.error(e.getMessage(), e)
+                }
+            }
+            null
+        })
     }
 }

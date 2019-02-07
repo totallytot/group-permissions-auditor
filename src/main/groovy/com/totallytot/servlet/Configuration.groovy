@@ -10,6 +10,7 @@ import com.atlassian.sal.api.auth.LoginUriProvider
 import com.atlassian.sal.api.user.UserManager
 import com.atlassian.webresource.api.assembler.PageBuilderService
 import com.totallytot.services.PluginConfigurationService
+import com.totallytot.services.PluginJobService
 
 import javax.inject.Inject
 import javax.servlet.ServletException
@@ -21,6 +22,8 @@ import java.util.stream.Collectors
 @Scanned
 class Configuration extends HttpServlet {
     private final PluginConfigurationService pluginConfigurationService
+    private final PluginJobService pluginJobService
+    private final String JOB_KEY_NAME = "groupPermissionsAuditJob"
     @ComponentImport
     private final LoginUriProvider loginUriProvider
     @ComponentImport
@@ -37,7 +40,7 @@ class Configuration extends HttpServlet {
     @Inject
     Configuration(LoginUriProvider loginUriProvider, UserManager userManager, UserAccessor userAccessor,
     SpaceManager spaceManager, TemplateRenderer renderer, PluginConfigurationService pluginConfigurationService,
-                  PageBuilderService pageBuilderService) {
+                  PageBuilderService pageBuilderService, PluginJobService pluginJobService) {
         this.loginUriProvider = loginUriProvider
         this.userManager = userManager
         this.userAccessor = userAccessor
@@ -45,6 +48,7 @@ class Configuration extends HttpServlet {
         this.renderer = renderer
         this.pluginConfigurationService = pluginConfigurationService
         this.pageBuilderService = pageBuilderService
+        this.pluginJobService = pluginJobService
     }
 
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -68,12 +72,15 @@ class Configuration extends HttpServlet {
             return
         }
 
+        //for testing
+        pluginJobService.pluginJob
+
         pageBuilderService.assembler().resources().requireWebResource("com.totallytot.group-permissions-auditor:group-permissions-auditor-resources")
 
         //load data for context from DB
         def context = pluginConfigurationService.configurationData
         context << ["allSpaceKeys":spaceManager.getAllSpaceKeys(SpaceStatus.CURRENT),
-                    "allGroups":userAccessor.groupsAsList]
+                    "allGroups":userAccessor.groupsAsList, "allUserNames":userAccessor.userNamesWithConfluenceAccess]
         resp.setContentType("text/html;charset=utf-8")
         renderer.render("configuration.vm", context, resp.writer)
         resp.writer.close()

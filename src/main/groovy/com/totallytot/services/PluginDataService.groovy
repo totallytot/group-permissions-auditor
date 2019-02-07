@@ -14,7 +14,18 @@ interface PluginDataService {
 
     void removeMonitoredGroup(String group)
 
-    boolean isEmailActive()
+    Boolean isEmailActive()
 
-    void activateEmail(boolean active)
+    void activateEmail(Boolean active)
+
+    Boolean isPermissionRemovalActive()
+
+    void activatePermissionRemoval(Boolean active)
+
+    void setNotificationReceiver(String userName)
+
+    Set<String> getNotificationReceivers()
+
+    void removeNotificationReceiver(String userName)
+
 }

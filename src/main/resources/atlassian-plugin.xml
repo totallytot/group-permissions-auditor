@@ -24,8 +24,9 @@
     <description>The module configuring the Active Objects service used by this plugin</description>
     <entity>com.totallytot.ao.MonitoredGroup</entity>
     <entity>com.totallytot.ao.IgnoredSpace</entity>
+    <entity>com.totallytot.ao.UserName</entity>
   </ao>
-  <job-config name="Group Permissions Audit Job" key="auditJobConfig">
+  <job-config name="Group Permissions Audit Job" key="groupPermissionsAuditJob">
     <job key="auditJob" perClusterJob="true"/>
     <schedule cron-expression="0 0 0 * * ?" jitterSecs="10"/>
     <managed editable="true" keepingHistory="true" canRunAdhoc="true" canDisable="true"/>
