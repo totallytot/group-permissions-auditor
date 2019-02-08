@@ -20,13 +20,14 @@
         <label for="monitored-groups">Select affected groups:</label>
         <select class="multi-select" multiple="multiple" size="8" id="monitored-groups">
             #foreach($group in $allGroups)
-                <option value="$group.getName()" #if ($monitoredGroups.contains($group.getName())) selected #end>$group.getName()</option>
+                <option value="$group.getName()" #if ($monitoredGroups.contains($group.getName()))
+                        selected #end>$group.getName()</option>
             #end
         </select>
     </div>
 
     <div class="field-group-audit" id="email-receivers"
-        #if ($email.equals("false")) style="display:none;" #end>
+        #if ($email.equals("false")) hidden #end>
         <label for="email-receivers">Select mail receivers:</label>
         <select class="multi-select" multiple="multiple" size="8">
             #foreach($userName in $allUserNames)
@@ -51,6 +52,9 @@
         <button class="aui-button aui-button-primary" id="save-button">Save</button>
     </div>
 </form>
+<h5>Job Management</h5>
+<span class="aui-lozenge aui-lozenge-success">$jobStatus</span>
+<button class="aui-button" id="button-spin-1">$jobControlButton</button>
 
 <div class="aui-message aui-message-info" id="message-info-audit">
     <strong>Configuration:</strong> visit Administration - Scheduled Jobs in order to set time interval for running job

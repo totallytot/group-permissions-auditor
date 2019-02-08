@@ -73,7 +73,7 @@ class Configuration extends HttpServlet {
         }
 
         //for testing
-        pluginJobService.pluginJob
+        pluginJobService.getScheduledJobKey(JOB_KEY_NAME)
 
         pageBuilderService.assembler().resources().requireWebResource("com.totallytot.group-permissions-auditor:group-permissions-auditor-resources")
 

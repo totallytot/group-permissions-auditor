@@ -1,5 +1,3 @@
-
-
 AJS.toInit(function () {
     AJS.$(".multi-select").auiSelect2();
 
