@@ -10,7 +10,7 @@ import javax.inject.Named
 @Named("pluginConfigurationService")
 class PluginConfigurationServiceImpl implements PluginConfigurationService {
 
-    private final String JOB_KEY_NAME = "groupPermissionsAuditJob"
+    private final String AUDIT_JOB_KEY = "groupPermissionsAuditJob"
     private final PluginDataService pluginDataService
     private final PluginJobService pluginJobService
 
@@ -22,16 +22,16 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
 
     @Override
     Map<String, Object> getConfigurationData() {
-        def jobStatus = pluginJobService.getJobStatus(JOB_KEY_NAME)
-        def jobControlButton = jobStatus == "SCHEDULED" ? "Disable Job" : "Enable Job"
+        def jobStatus = pluginJobService.getJobStatus(AUDIT_JOB_KEY)
+        def jobControlButton = jobStatus == "SCHEDULED" ? "Disable" : "Enable"
         [
-                "ignoredSpaces"    : pluginDataService.ignoredSpaces,
-                "monitoredGroups"  : pluginDataService.monitoredGroups,
-                "email"            : pluginDataService.emailActive.toString(),
-                "permission"       : pluginDataService.permissionRemovalActive.toString(),
-                "receivers"        : pluginDataService.notificationReceivers,
-                "jobStatus"        : jobStatus,
-                "jobControlButton" : jobControlButton
+                "ignoredSpaces"   : pluginDataService.ignoredSpaces,
+                "monitoredGroups" : pluginDataService.monitoredGroups,
+                "email"           : pluginDataService.emailActive.toString(),
+                "permission"      : pluginDataService.permissionRemovalActive.toString(),
+                "receivers"       : pluginDataService.notificationReceivers,
+                "jobStatus"       : jobStatus,
+                "jobControlButton": jobControlButton
         ]
     }
 
@@ -56,4 +56,10 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
         if (permission != null) pluginDataService.activatePermissionRemoval(permission)
         true
     }
+
+    @Override
+    void enableAuditJob() { pluginJobService.enableJob(AUDIT_JOB_KEY) }
+
+    @Override
+    void disableAuditJob() { pluginJobService.disableJob(AUDIT_JOB_KEY) }
 }

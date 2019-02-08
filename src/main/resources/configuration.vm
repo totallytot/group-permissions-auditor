@@ -53,8 +53,14 @@
     </div>
 </form>
 <h5>Job Management</h5>
-<span class="aui-lozenge aui-lozenge-success">$jobStatus</span>
-<button class="aui-button" id="button-spin-1">$jobControlButton</button>
+    #if ($jobStatus.equals("SCHEDULED")) <span class="aui-lozenge aui-lozenge-success" id="state-indicator">$jobStatus</span>
+    #elseif ($jobStatus.equals("DISABLED")) <span class="aui-lozenge aui-lozenge-error" id="state-indicator">$jobStatus</span>
+    #end
+
+<div class="aui-buttons" id="job-buttons">
+    <button class="aui-button" id="state-button">$jobControlButton</button>
+    <button class="aui-button">Run Now</button>
+</div>
 
 <div class="aui-message aui-message-info" id="message-info-audit">
     <strong>Configuration:</strong> visit Administration - Scheduled Jobs in order to set time interval for running job

@@ -14,3 +14,7 @@
 .btn {
     margin-left: 60px;
 }
+#job-buttons {
+    display: block;
+    margin-top: 10px;
+}

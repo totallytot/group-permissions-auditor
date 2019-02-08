@@ -13,7 +13,7 @@ AJS.toInit(function () {
         dataObject.permission = togglePermission.checked;
     });
 
-    //will store all data
+    //stores configuration data
     var dataObject = {};
     dataObject.spacesToAdd = [];
     dataObject.spacesToDel = [];
@@ -116,5 +116,40 @@ AJS.toInit(function () {
                 }
             });
         }
+    });
+
+    //AJAX and enable/disable button behaviour
+    var stateBtn = AJS.$("#state-button");
+    var stateInd = AJS.$("#state-indicator");
+    stateBtn.click(function () {
+        var action = stateBtn.text().toLowerCase();
+        AJS.$.ajax({
+            url: AJS.contextPath() + '/plugins/servlet/groupaudit',
+            traditional: true,
+            type: 'POST',
+            dataType: 'json',
+            data: action,
+            success: function (resp) {
+                console.log("SUCCESS");
+                if (action === "disable") {
+                    stateBtn.text("Enable");
+                    stateInd.removeClass('aui-lozenge aui-lozenge-success')
+                        .addClass('aui-lozenge aui-lozenge-error').text("DISABLED")
+                } else if (action === "enable") {
+                    stateBtn.text("Disable");
+                    stateInd.removeClass('aui-lozenge aui-lozenge-error')
+                        .addClass('aui-lozenge aui-lozenge-success').text("SCHEDULED")
+                }
+            },
+            error: function (err) {
+                console.log("ERROR");
+                console.log(err);
+                AJS.flag({
+                    type: 'error',
+                    body: 'Something went wrong! Check logs!',
+                    close: "auto"
+                });
+            }
+        });
     });
 });

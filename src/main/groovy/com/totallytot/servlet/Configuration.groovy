@@ -23,7 +23,6 @@ import java.util.stream.Collectors
 class Configuration extends HttpServlet {
     private final PluginConfigurationService pluginConfigurationService
     private final PluginJobService pluginJobService
-    private final String JOB_KEY_NAME = "groupPermissionsAuditJob"
     @ComponentImport
     private final LoginUriProvider loginUriProvider
     @ComponentImport
@@ -39,7 +38,7 @@ class Configuration extends HttpServlet {
 
     @Inject
     Configuration(LoginUriProvider loginUriProvider, UserManager userManager, UserAccessor userAccessor,
-    SpaceManager spaceManager, TemplateRenderer renderer, PluginConfigurationService pluginConfigurationService,
+                  SpaceManager spaceManager, TemplateRenderer renderer, PluginConfigurationService pluginConfigurationService,
                   PageBuilderService pageBuilderService, PluginJobService pluginJobService) {
         this.loginUriProvider = loginUriProvider
         this.userManager = userManager
@@ -72,15 +71,12 @@ class Configuration extends HttpServlet {
             return
         }
 
-        //for testing
-        pluginJobService.getScheduledJobKey(JOB_KEY_NAME)
-
         pageBuilderService.assembler().resources().requireWebResource("com.totallytot.group-permissions-auditor:group-permissions-auditor-resources")
 
         //load data for context from DB
         def context = pluginConfigurationService.configurationData
-        context << ["allSpaceKeys":spaceManager.getAllSpaceKeys(SpaceStatus.CURRENT),
-                    "allGroups":userAccessor.groupsAsList, "allUserNames":userAccessor.userNamesWithConfluenceAccess]
+        context << ["allSpaceKeys": spaceManager.getAllSpaceKeys(SpaceStatus.CURRENT),
+                    "allGroups"   : userAccessor.groupsAsList, "allUserNames": userAccessor.userNamesWithConfluenceAccess]
         resp.setContentType("text/html;charset=utf-8")
         renderer.render("configuration.vm", context, resp.writer)
         resp.writer.close()
@@ -88,8 +84,13 @@ class Configuration extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String jsonString = req.reader.lines().collect(Collectors.joining())
-        if (pluginConfigurationService.updateConfigDataFromJSON(jsonString)) resp.sendError(HttpServletResponse.SC_OK)
-        else resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+        if (req.getParameterNames().any { it.toString() == "disable" }) pluginConfigurationService.disableAuditJob()
+        else if (req.getParameterNames().any { it.toString() == "enable" }) pluginConfigurationService.enableAuditJob()
+        else {
+            //if no parameters are passed -> it means that AJAX was triggered by "save" button
+            String jsonString = req.reader.lines().collect(Collectors.joining())
+            if (pluginConfigurationService.updateConfigDataFromJSON(jsonString)) resp.sendError(HttpServletResponse.SC_OK)
+            else resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+        }
     }
 }

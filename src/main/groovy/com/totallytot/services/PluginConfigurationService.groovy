@@ -6,4 +6,7 @@ interface PluginConfigurationService {
 
     boolean updateConfigDataFromJSON(String jsonData)
 
+    void enableAuditJob()
+
+    void disableAuditJob()
 }
