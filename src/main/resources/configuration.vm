@@ -48,18 +48,26 @@
         <aui-label for="permission-removal">Remove permissions</aui-label>
     </div>
 
-    <div class="btn">
+    <div class="save-btn">
         <button class="aui-button aui-button-primary" id="save-button">Save</button>
     </div>
 </form>
 <h5>Job Management</h5>
-    #if ($jobStatus.equals("SCHEDULED")) <span class="aui-lozenge aui-lozenge-success" id="state-indicator">$jobStatus</span>
-    #elseif ($jobStatus.equals("DISABLED")) <span class="aui-lozenge aui-lozenge-error" id="state-indicator">$jobStatus</span>
+    #if ($jobStatusBar.equals("Scheduled")) <span class="aui-lozenge aui-lozenge-success"
+                                                  id="state-indicator">$jobStatusBar</span>
+    #elseif ($jobStatusBar.equals("Disabled")) <span class="aui-lozenge aui-lozenge-error"
+                                                     id="state-indicator">$jobStatusBar</span>
     #end
+
+<div class="audit-job-interval">
+    <label for="job-interval">Audit Job interval (hours):</label>
+    <input type="number" min="0" id="job-interval" class="text" value="$!timeframe">
+</div>
+
 
 <div class="aui-buttons" id="job-buttons">
     <button class="aui-button" id="state-button">$jobControlButton</button>
-    <button class="aui-button">Run Now</button>
+    <button class="aui-button" id="run-now-button">Run Now</button>
 </div>
 
 <div class="aui-message aui-message-info" id="message-info-audit">

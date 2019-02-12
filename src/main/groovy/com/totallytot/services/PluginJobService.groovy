@@ -1,8 +1,11 @@
 package com.totallytot.services
 
 import com.atlassian.confluence.schedule.ScheduledJobKey
+import com.atlassian.confluence.schedule.ScheduledJobStatus
 
 interface PluginJobService {
+
+    ScheduledJobStatus getJobStatus(String jobKey)
 
     ScheduledJobKey getScheduledJobKey(String jobKey)
 
@@ -14,6 +17,6 @@ interface PluginJobService {
 
     String getCronExpression(String jobKey)
 
-    String getJobStatus(String jobKey)
+    Date updateSimpleJobSchedule(String jobKey, long repeatInterval)
 
 }

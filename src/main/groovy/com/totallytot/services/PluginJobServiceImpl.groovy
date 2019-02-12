@@ -1,6 +1,7 @@
 package com.totallytot.services
 
 import com.atlassian.confluence.schedule.ScheduledJobKey
+import com.atlassian.confluence.schedule.ScheduledJobStatus
 import com.atlassian.confluence.schedule.managers.ScheduledJobManager
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService
 import com.atlassian.spring.container.ContainerManager
@@ -19,32 +20,24 @@ class PluginJobServiceImpl implements PluginJobService{
     }
 
     @Override
-    ScheduledJobKey getScheduledJobKey(String jobKey) {
-        scheduledJobManager.scheduledJobs.find {it.key.jobId == jobKey}.key
-    }
+    ScheduledJobStatus getJobStatus(String jobKey) { scheduledJobManager.scheduledJobs.find {it.key.jobId == jobKey}}
 
     @Override
-    void runJob(String jobKey) {
-        scheduledJobManager.runNow(getScheduledJobKey(jobKey))
-    }
+    ScheduledJobKey getScheduledJobKey(String jobKey) { getJobStatus(jobKey).key}
 
     @Override
-    void enableJob(String jobKey) {
-        scheduledJobManager.enable(getScheduledJobKey(jobKey))
-    }
+    void runJob(String jobKey) { scheduledJobManager.runNow(getScheduledJobKey(jobKey)) }
 
     @Override
-    void disableJob(String jobKey) {
-        scheduledJobManager.disable(getScheduledJobKey(jobKey))
-    }
+    void enableJob(String jobKey) { scheduledJobManager.enable(getScheduledJobKey(jobKey)) }
 
     @Override
-    String getCronExpression(String jobKey) {
-        return null
-    }
+    void disableJob(String jobKey) { scheduledJobManager.disable(getScheduledJobKey(jobKey)) }
 
     @Override
-    String getJobStatus(String jobKey) {
-        scheduledJobManager.scheduledJobs.find {it.key.jobId == jobKey}.status.toString()
-    }
+    String getCronExpression(String jobKey) { scheduledJobManager.getCronExpression(getScheduledJobKey(jobKey))}
+
+    @Override
+    Date updateSimpleJobSchedule(String jobKey, long repeatInterval) {
+        scheduledJobManager.updateSimpleJobSchedule(getScheduledJobKey(jobKey), repeatInterval) }
 }

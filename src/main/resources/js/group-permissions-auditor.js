@@ -118,7 +118,7 @@ AJS.toInit(function () {
         }
     });
 
-    //AJAX and enable/disable button behaviour
+    //enable/disable button behaviour + state
     var stateBtn = AJS.$("#state-button");
     var stateInd = AJS.$("#state-indicator");
     stateBtn.click(function () {
@@ -129,17 +129,41 @@ AJS.toInit(function () {
             type: 'POST',
             dataType: 'json',
             data: action,
-            success: function (resp) {
+            success: function () {
                 console.log("SUCCESS");
                 if (action === "disable") {
                     stateBtn.text("Enable");
                     stateInd.removeClass('aui-lozenge aui-lozenge-success')
-                        .addClass('aui-lozenge aui-lozenge-error').text("DISABLED")
+                        .addClass('aui-lozenge aui-lozenge-error').text("Disabled")
                 } else if (action === "enable") {
                     stateBtn.text("Disable");
                     stateInd.removeClass('aui-lozenge aui-lozenge-error')
-                        .addClass('aui-lozenge aui-lozenge-success').text("SCHEDULED")
+                        .addClass('aui-lozenge aui-lozenge-success').text("Scheduled")
                 }
+            },
+            error: function (err) {
+                console.log("ERROR");
+                console.log(err);
+                AJS.flag({
+                    type: 'error',
+                    body: 'Something went wrong! Check logs!',
+                    close: "auto"
+                });
+            }
+        });
+    });
+
+    //run now button behaviour
+    var runBtn = AJS.$('#run-now-button');
+    runBtn.click(function () {
+        AJS.$.ajax({
+            url: AJS.contextPath() + '/plugins/servlet/groupaudit',
+            traditional: true,
+            type: 'POST',
+            dataType: 'json',
+            data: 'run',
+            success: function () {
+                console.log("SUCCESS");
             },
             error: function (err) {
                 console.log("ERROR");

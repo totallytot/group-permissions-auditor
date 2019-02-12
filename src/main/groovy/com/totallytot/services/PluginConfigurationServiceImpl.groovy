@@ -22,16 +22,18 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
 
     @Override
     Map<String, Object> getConfigurationData() {
-        def jobStatus = pluginJobService.getJobStatus(AUDIT_JOB_KEY)
-        def jobControlButton = jobStatus == "SCHEDULED" ? "Disable" : "Enable"
+        def isJobEnabled = pluginJobService.getJobStatus(AUDIT_JOB_KEY).isEnabled()
+        def jobControlButton = isJobEnabled ? "Disable" : "Enable"
+        def jobStatusBar = isJobEnabled ? "Scheduled" : "Disabled"
         [
                 "ignoredSpaces"   : pluginDataService.ignoredSpaces,
                 "monitoredGroups" : pluginDataService.monitoredGroups,
                 "email"           : pluginDataService.emailActive.toString(),
                 "permission"      : pluginDataService.permissionRemovalActive.toString(),
                 "receivers"       : pluginDataService.notificationReceivers,
-                "jobStatus"       : jobStatus,
-                "jobControlButton": jobControlButton
+                "jobStatusBar"    : jobStatusBar,
+                "jobControlButton": jobControlButton,
+                "cron"            : auditJobCron
         ]
     }
 
@@ -62,4 +64,13 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
 
     @Override
     void disableAuditJob() { pluginJobService.disableJob(AUDIT_JOB_KEY) }
+
+    @Override
+    void runAuditJob() { pluginJobService.runJob(AUDIT_JOB_KEY) }
+
+    @Override
+    String getAuditJobCron() { pluginJobService.getCronExpression(AUDIT_JOB_KEY)}
+
+    @Override
+    Date updateAuditJobRepeatInterval(long repeatInterval) { pluginJobService.updateSimpleJobSchedule(AUDIT_JOB_KEY, repeatInterval) }
 }

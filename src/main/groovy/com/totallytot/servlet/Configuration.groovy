@@ -75,8 +75,12 @@ class Configuration extends HttpServlet {
 
         //load data for context from DB
         def context = pluginConfigurationService.configurationData
-        context << ["allSpaceKeys": spaceManager.getAllSpaceKeys(SpaceStatus.CURRENT),
-                    "allGroups"   : userAccessor.groupsAsList, "allUserNames": userAccessor.userNamesWithConfluenceAccess]
+        context <<
+                [
+                        "allSpaceKeys": spaceManager.getAllSpaceKeys(SpaceStatus.CURRENT),
+                        "allGroups"   : userAccessor.groupsAsList,
+                        "allUserNames": userAccessor.userNamesWithConfluenceAccess
+                ]
         resp.setContentType("text/html;charset=utf-8")
         renderer.render("configuration.vm", context, resp.writer)
         resp.writer.close()
@@ -86,6 +90,7 @@ class Configuration extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getParameterNames().any { it.toString() == "disable" }) pluginConfigurationService.disableAuditJob()
         else if (req.getParameterNames().any { it.toString() == "enable" }) pluginConfigurationService.enableAuditJob()
+        else if (req.getParameterNames().any {it.toString() == "run"}) pluginConfigurationService.runAuditJob()
         else {
             //if no parameters are passed -> it means that AJAX was triggered by "save" button
             String jsonString = req.reader.lines().collect(Collectors.joining())

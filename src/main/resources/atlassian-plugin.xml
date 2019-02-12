@@ -16,6 +16,7 @@
     <dependency>com.atlassian.auiplugin:aui-select2</dependency>
     <dependency>com.atlassian.auiplugin:aui-flag</dependency>
     <dependency>com.atlassian.auiplugin:aui-toggle</dependency>
+    <dependency>com.atlassian.auiplugin:aui-button</dependency>
     <resource type="download" name="group-permissions-auditor.css" location="/css/group-permissions-auditor.css"/>
     <resource type="download" name="group-permissions-auditor.js" location="/js/group-permissions-auditor.js"/>
     <resource type="download" name="images/" location="/images"/>

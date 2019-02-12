@@ -9,4 +9,10 @@ interface PluginConfigurationService {
     void enableAuditJob()
 
     void disableAuditJob()
+
+    void runAuditJob()
+
+    String getAuditJobCron()
+
+    Date updateAuditJobRepeatInterval(long interval)
 }
