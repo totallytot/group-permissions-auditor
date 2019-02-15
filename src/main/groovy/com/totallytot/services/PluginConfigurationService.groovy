@@ -15,4 +15,6 @@ interface PluginConfigurationService {
     String getAuditJobCron()
 
     Date updateAuditJobRepeatInterval(long interval)
+
+    List getAuditReportAsList()
 }

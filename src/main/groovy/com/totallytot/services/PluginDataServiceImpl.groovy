@@ -4,7 +4,7 @@ import com.atlassian.activeobjects.external.ActiveObjects
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory
-import com.atlassian.sal.api.transaction.TransactionCallback
+import com.totallytot.ao.AuditReport
 import com.totallytot.ao.UserName
 import com.totallytot.ao.IgnoredSpace
 import com.totallytot.ao.MonitoredGroup
@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull
 
 @ExportAsService([PluginDataService])
 @Named("pluginDataService")
-class PluginDataServiceImpl implements PluginDataService{
+class PluginDataServiceImpl implements PluginDataService {
 
     private static final Logger log = Logger.getLogger(PluginDataServiceImpl.class)
     private static final String PLUGIN_STORAGE_KEY = "com.totallytot"
@@ -37,70 +37,65 @@ class PluginDataServiceImpl implements PluginDataService{
 
     @Override
     void setIgnoredSpace(String spaceKey) {
-        ao.executeInTransaction({
-            final IgnoredSpace ignoredSpace = ao.create(IgnoredSpace.class)
-            ignoredSpace.setIgnoredSpaceKey(spaceKey)
-            ignoredSpace.save()
-            ignoredSpace
-        })
+        final IgnoredSpace ignoredSpace = ao.create(IgnoredSpace.class)
+        ignoredSpace.setIgnoredSpaceKey(spaceKey)
+        ignoredSpace.save()
     }
 
     @Override
-    Set<String> getIgnoredSpaces() {
-        def spaces = [] as Set
-        ao.executeInTransaction((TransactionCallback<Void>) {
-            ao.find(IgnoredSpace.class).each {spaces << it.ignoredSpaceKey}
-            null
-        })
-        spaces
-    }
+    Set<String> getIgnoredSpaces() { ao.find(IgnoredSpace.class).collect { it.ignoredSpaceKey } }
 
     @Override
     void removeIgnoredSpace(String spaceKey) {
-        ao.executeInTransaction((TransactionCallback<Void>) {
-            ao.find(IgnoredSpace.class, "IGNORED_SPACE_KEY = ?", spaceKey).each {
-                try {
-                    it.getEntityManager().delete(it)
-                } catch (SQLException e) {
-                    log.error(e.getMessage(), e)
-                }
+        ao.find(IgnoredSpace.class, "IGNORED_SPACE_KEY = ?", spaceKey).each {
+            try {
+                it.entityManager.delete(it)
+            } catch (SQLException e) {
+                log.error(e.message, e)
             }
-            null
-        })
+        }
     }
 
     @Override
     void setMonitoredGroup(String group) {
-        ao.executeInTransaction({
-            final MonitoredGroup monitoredGroup = ao.create(MonitoredGroup.class)
-            monitoredGroup.setMonitoredGroup(group)
-            monitoredGroup.save()
-            monitoredGroup
-        })
+        final MonitoredGroup monitoredGroup = ao.create(MonitoredGroup.class)
+        monitoredGroup.setMonitoredGroup(group)
+        monitoredGroup.save()
     }
 
     @Override
-    Set<String> getMonitoredGroups() {
-        def groups = new HashSet<>()
-        ao.executeInTransaction((TransactionCallback<Void>) {
-            ao.find(MonitoredGroup.class).each {groups << it.monitoredGroup}
-            null
-        })
-        groups
-    }
+    Set<String> getMonitoredGroups() { ao.find(MonitoredGroup.class).collect { it.monitoredGroup } }
 
     @Override
     void removeMonitoredGroup(String group) {
-        ao.executeInTransaction((TransactionCallback<Void>){
-            ao.find(MonitoredGroup.class, "MONITORED_GROUP = ?", group).each {
-                try {
-                    it.getEntityManager().delete(it)
-                } catch (SQLException e) {
-                    log.error(e.getMessage(), e)
-                }
+        ao.find(MonitoredGroup.class, "MONITORED_GROUP = ?", group).each {
+            try {
+                it.entityManager.delete(it)
+            } catch (SQLException e) {
+                log.error(e.message, e)
             }
-            null
-        })
+        }
+    }
+
+    @Override
+    void setNotificationReceiver(String userName) {
+        final UserName mail = ao.create(UserName.class)
+        mail.setUserName(userName)
+        mail.save()
+    }
+
+    @Override
+    Set<String> getNotificationReceivers() { ao.find(UserName.class).collect { it.userName } }
+
+    @Override
+    void removeNotificationReceiver(String userName) {
+        ao.find(UserName.class, "USER_NAME = ?", userName).each {
+            try {
+                it.entityManager.delete(it)
+            } catch (SQLException e) {
+                log.error(e.message, e)
+            }
+        }
     }
 
     @Override
@@ -130,36 +125,27 @@ class PluginDataServiceImpl implements PluginDataService{
     }
 
     @Override
-    void setNotificationReceiver(String userName) {
-        ao.executeInTransaction({
-            final UserName mail = ao.create(UserName.class)
-            mail.setUserName(userName)
-            mail.save()
-            mail
-        })
+    void addRecordToAuditReport(String spaceKey, String group, String permission, String userName, String date) {
+        final AuditReport row = ao.create(AuditReport.class)
+        row.setSpaceKey(spaceKey)
+        row.setGroup(group)
+        row.setPermission(permission)
+        row.setViolator(userName)
+        row.setDate(date)
+        row.save()
     }
 
     @Override
-    Set<String> getNotificationReceivers() {
-        def mails = new HashSet<>()
-        ao.executeInTransaction((TransactionCallback<Void>) {
-            ao.find(UserName.class).each {mails << it.userName}
-            null
-        })
-        mails
-    }
+    List<AuditReport> getAuditReportEntities() { ao.find(AuditReport.class) }
 
     @Override
-    void removeNotificationReceiver(String userName) {
-        ao.executeInTransaction((TransactionCallback<Void>){
-            ao.find(UserName.class, "USER_NAME = ?", userName).each {
-                try {
-                    it.getEntityManager().delete(it)
-                } catch (SQLException e) {
-                    log.error(e.getMessage(), e)
-                }
+    void removeAllAuditReportEntities() {
+        auditReportEntities.each {
+            try {
+                it.entityManager.delete(it)
+            } catch (SQLException e) {
+                log.error(e.message, e)
             }
-            null
-        })
+        }
     }
 }

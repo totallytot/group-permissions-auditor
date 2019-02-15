@@ -94,7 +94,7 @@ AJS.toInit(function () {
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(dataObject),
-                success: function (resp) {
+                success: function () {
                     console.log("SUCCESS");
                     console.log(JSON.stringify(dataObject));
                     AJS.flag({
@@ -127,7 +127,6 @@ AJS.toInit(function () {
             url: AJS.contextPath() + '/plugins/servlet/groupaudit',
             traditional: true,
             type: 'POST',
-            dataType: 'json',
             data: action,
             success: function () {
                 console.log("SUCCESS");
@@ -160,7 +159,6 @@ AJS.toInit(function () {
             url: AJS.contextPath() + '/plugins/servlet/groupaudit',
             traditional: true,
             type: 'POST',
-            dataType: 'json',
             data: 'run',
             success: function () {
                 console.log("SUCCESS");

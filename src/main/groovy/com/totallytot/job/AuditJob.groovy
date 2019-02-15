@@ -39,6 +39,7 @@ class AuditJob implements JobRunner {
             //job
             @Override
             Void doInTransaction() {
+                pluginDataService.removeAllAuditReportEntities()
                 runGroupPermissionsAudit()
                 null
             }
@@ -54,7 +55,18 @@ class AuditJob implements JobRunner {
             def spacesForAudit = allSpaces.findAll { space -> !ignoredSpaces.contains(space.key) }
             spacesForAudit.each { space ->
                 def permissionsToRemove = space.getPermissions().findAll { permission ->
-                    permission.isGroupPermission() && monitoredGroups.contains(permission.getGroup()) }
+                    permission.isGroupPermission() && monitoredGroups.contains(permission.getGroup())
+                }
+                if (permissionsToRemove) permissionsToRemove.each {
+                    //null pointer exception related to permissions in DS space
+                    def creator
+                    try {
+                        creator = it.creator.name
+                    } catch (NullPointerException e) {
+                        creator = e.message
+                    }
+                    pluginDataService.addRecordToAuditReport(space.key, it.group, it.type, creator, it.creationDate.toString())
+                }
                 if (permissionsToRemove && pluginDataService.permissionRemovalActive)
                     0.upto(permissionsToRemove.size() - 1) { space.removePermission(permissionsToRemove.get(it)) }
             }

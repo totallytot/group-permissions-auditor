@@ -73,4 +73,11 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
 
     @Override
     Date updateAuditJobRepeatInterval(long repeatInterval) { pluginJobService.updateSimpleJobSchedule(AUDIT_JOB_KEY, repeatInterval) }
+
+    @Override
+    List getAuditReportAsList() {
+        pluginDataService.auditReportEntities.collect{
+            it.spaceKey + "," + it.group + "," + it.permission + "," + it.violator + "," + it.date
+        }
+    }
 }

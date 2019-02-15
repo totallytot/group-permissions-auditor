@@ -1,5 +1,9 @@
 package com.totallytot.services
 
+import com.atlassian.activeobjects.tx.Transactional
+import com.totallytot.ao.AuditReport
+
+@Transactional
 interface PluginDataService {
 
     void setIgnoredSpace(String spaceKey)
@@ -28,4 +32,9 @@ interface PluginDataService {
 
     void removeNotificationReceiver(String userName)
 
+    void addRecordToAuditReport(String spaceKey, String group, String permission, String userName, String date)
+
+    List<AuditReport> getAuditReportEntities()
+
+    void removeAllAuditReportEntities()
 }

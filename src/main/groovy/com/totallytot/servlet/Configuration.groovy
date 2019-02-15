@@ -70,7 +70,6 @@ class Configuration extends HttpServlet {
             redirectToLogin(req, resp)
             return
         }
-
         pageBuilderService.assembler().resources().requireWebResource("com.totallytot.group-permissions-auditor:group-permissions-auditor-resources")
 
         //load data for context from DB
@@ -88,6 +87,8 @@ class Configuration extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //testing
+        pluginConfigurationService.auditReportAsList.each {it.println(it)}
         if (req.getParameterNames().any { it.toString() == "disable" }) pluginConfigurationService.disableAuditJob()
         else if (req.getParameterNames().any { it.toString() == "enable" }) pluginConfigurationService.enableAuditJob()
         else if (req.getParameterNames().any {it.toString() == "run"}) pluginConfigurationService.runAuditJob()

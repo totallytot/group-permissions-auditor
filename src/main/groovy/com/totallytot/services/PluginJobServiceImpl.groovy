@@ -10,20 +10,19 @@ import javax.inject.Named
 
 @ExportAsService([PluginJobService])
 @Named("pluginJobService")
-class PluginJobServiceImpl implements PluginJobService{
+class PluginJobServiceImpl implements PluginJobService {
 
     private final ScheduledJobManager scheduledJobManager
 
     PluginJobServiceImpl() {
-        //com.atlassian.confluence.schedule.managers -> Interface ScheduledJobManager
         this.scheduledJobManager = (ScheduledJobManager) ContainerManager.getInstance().getComponent("scheduledJobManager")
     }
 
     @Override
-    ScheduledJobStatus getJobStatus(String jobKey) { scheduledJobManager.scheduledJobs.find {it.key.jobId == jobKey}}
+    ScheduledJobStatus getJobStatus(String jobKey) { scheduledJobManager.scheduledJobs.find { it.key.jobId == jobKey } }
 
     @Override
-    ScheduledJobKey getScheduledJobKey(String jobKey) { getJobStatus(jobKey).key}
+    ScheduledJobKey getScheduledJobKey(String jobKey) { getJobStatus(jobKey).key }
 
     @Override
     void runJob(String jobKey) { scheduledJobManager.runNow(getScheduledJobKey(jobKey)) }
@@ -35,9 +34,10 @@ class PluginJobServiceImpl implements PluginJobService{
     void disableJob(String jobKey) { scheduledJobManager.disable(getScheduledJobKey(jobKey)) }
 
     @Override
-    String getCronExpression(String jobKey) { scheduledJobManager.getCronExpression(getScheduledJobKey(jobKey))}
+    String getCronExpression(String jobKey) { scheduledJobManager.getCronExpression(getScheduledJobKey(jobKey)) }
 
     @Override
     Date updateSimpleJobSchedule(String jobKey, long repeatInterval) {
-        scheduledJobManager.updateSimpleJobSchedule(getScheduledJobKey(jobKey), repeatInterval) }
+        scheduledJobManager.updateSimpleJobSchedule(getScheduledJobKey(jobKey), repeatInterval)
+    }
 }
