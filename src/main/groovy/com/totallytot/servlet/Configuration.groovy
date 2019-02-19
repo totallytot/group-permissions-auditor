@@ -11,6 +11,7 @@ import com.atlassian.sal.api.user.UserManager
 import com.atlassian.webresource.api.assembler.PageBuilderService
 import com.totallytot.services.PluginConfigurationService
 import com.totallytot.services.PluginJobService
+import groovy.json.JsonBuilder
 
 import javax.inject.Inject
 import javax.servlet.ServletException
@@ -87,13 +88,28 @@ class Configuration extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //testing
-        pluginConfigurationService.auditReportAsList.each {it.println(it)}
-        if (req.getParameterNames().any { it.toString() == "disable" }) pluginConfigurationService.disableAuditJob()
-        else if (req.getParameterNames().any { it.toString() == "enable" }) pluginConfigurationService.enableAuditJob()
-        else if (req.getParameterNames().any {it.toString() == "run"}) pluginConfigurationService.runAuditJob()
+        if (req.parameterNames.any { it.toString() == "disable" }) pluginConfigurationService.disableAuditJob()
+        else if (req.parameterNames.any { it.toString() == "enable" }) pluginConfigurationService.enableAuditJob()
+        else if (req.parameterNames.any { it.toString() == "run" }) pluginConfigurationService.runAuditJob()
+        else if (req.parameterNames.any { it.toString() == "show" }) {
+            def auditReportEntities = pluginConfigurationService.auditReportEntities
+            def jsonBuilder = new JsonBuilder()
+            jsonBuilder {
+                report(auditReportEntities.collect {[
+                        spacekey: it.spaceKey,
+                        group: it.group,
+                        permission: it.permission,
+                        violator: it.violator,
+                        date: it.date
+                ]})
+            }
+            resp.setContentType("application/json")
+            resp.setCharacterEncoding("UTF-8")
+            resp.writer.write(jsonBuilder.toPrettyString())
+            resp.writer.close()
+        }
         else {
-            //if no parameters are passed -> it means that AJAX was triggered by "save" button
+            //if no parameters are passed -> AJAX was triggered by "save" button
             String jsonString = req.reader.lines().collect(Collectors.joining())
             if (pluginConfigurationService.updateConfigDataFromJSON(jsonString)) resp.sendError(HttpServletResponse.SC_OK)
             else resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)

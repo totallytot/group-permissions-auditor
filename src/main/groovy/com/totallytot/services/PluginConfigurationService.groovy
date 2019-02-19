@@ -1,5 +1,7 @@
 package com.totallytot.services
 
+import com.totallytot.ao.AuditReport
+
 interface PluginConfigurationService {
 
     Map<String, Object> getConfigurationData()
@@ -12,9 +14,6 @@ interface PluginConfigurationService {
 
     void runAuditJob()
 
-    String getAuditJobCron()
+    List<AuditReport> getAuditReportEntities()
 
-    Date updateAuditJobRepeatInterval(long interval)
-
-    List getAuditReportAsList()
 }

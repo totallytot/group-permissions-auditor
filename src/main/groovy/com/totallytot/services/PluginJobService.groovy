@@ -17,6 +17,9 @@ interface PluginJobService {
 
     String getCronExpression(String jobKey)
 
-    Date updateSimpleJobSchedule(String jobKey, long repeatInterval)
+    long getAverageRunningTime(String jobKey)
 
+    Date getLastExecution(String jobKey)
+
+    Date getNextExecution(String jobKey)
 }

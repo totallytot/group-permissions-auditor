@@ -1,7 +1,7 @@
 AJS.toInit(function () {
     AJS.$(".multi-select").auiSelect2();
 
-    //toggle behaviour
+    //permission behaviour
     var toggleMail = document.getElementById("outgoing-email");
     AJS.$(document).on('change', toggleMail, function () {
         dataObject.email = toggleMail.checked;
@@ -46,7 +46,6 @@ AJS.toInit(function () {
             console.log('remove ' + e.removed.id);
         }
     });
-
     AJS.$(document).on('change', '#monitored-groups', function (e) {
         if (e.added) {
             console.log('add ' + e.added.id);
@@ -60,7 +59,6 @@ AJS.toInit(function () {
             console.log('remove ' + e.removed.id);
         }
     });
-
     AJS.$(document).on('change', '#email-receivers', function (e) {
         if (e.added) {
             console.log('add ' + e.added.id);
@@ -75,7 +73,7 @@ AJS.toInit(function () {
         }
     });
 
-    //AJAX and save button behaviour
+    //save button behaviour
     AJS.$("#save-button").click(function (e) {
         e.preventDefault();
         var ignoredSpaces = AJS.$("#ignored-spaces").val();
@@ -162,6 +160,41 @@ AJS.toInit(function () {
             data: 'run',
             success: function () {
                 console.log("SUCCESS");
+            },
+            error: function (err) {
+                console.log("ERROR");
+                console.log(err);
+                AJS.flag({
+                    type: 'error',
+                    body: 'Something went wrong! Check logs!',
+                    close: "auto"
+                });
+            }
+        });
+    });
+
+    //show last report button behaviour
+    var reportBtn = AJS.$('#report-button');
+    var tableBody = AJS.$('#audit-report > tbody');
+    reportBtn.click(function () {
+        tableBody.children().remove();
+        AJS.$.ajax({
+            url: AJS.contextPath() + '/plugins/servlet/groupaudit',
+            traditional: true,
+            type: 'POST',
+            data: 'show',
+            success: function (responseJson) {
+                console.log("SUCCESS");
+                for (i = 0; i < responseJson.report.length; i++) {
+                    var auditReportEntity = responseJson.report[i];
+                    tableBody.append('<tr>' +
+                        '<td headers="space-key">' + auditReportEntity.spacekey + '</td>' +
+                        '<td headers="group">' + auditReportEntity.group + '</td>' +
+                        '<td headers="permission">' + auditReportEntity.permission + '</td>' +
+                        '<td headers="creator">' + auditReportEntity.violator + '</td>' +
+                        '<td headers="date">' + auditReportEntity.date + '</td>' +
+                        '</tr>');
+                }
             },
             error: function (err) {
                 console.log("ERROR");

@@ -1,12 +1,12 @@
 .field-group-audit  {
-    width: 450px;
+    width: 650px;
 }
 
 #message-info-audit {
     width: 750px;
 }
 
-#toggle-permission, .audit-job-interval {
+#toggle-permission {
     margin-bottom: 10px;
     margin-top: 5px;
 }
@@ -21,5 +21,13 @@
 }
 
 #job-interval {
-    max-width: 40px;
+    max-width: 100px;
+}
+
+#audit-report{
+    width: 1000px;
+}
+
+#job-info {
+    width: 400px;
 }

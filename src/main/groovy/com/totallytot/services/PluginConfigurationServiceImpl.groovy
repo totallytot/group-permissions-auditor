@@ -1,6 +1,7 @@
 package com.totallytot.services
 
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService
+import com.totallytot.ao.AuditReport
 import groovy.json.JsonSlurper
 
 import javax.inject.Inject
@@ -26,14 +27,17 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
         def jobControlButton = isJobEnabled ? "Disable" : "Enable"
         def jobStatusBar = isJobEnabled ? "Scheduled" : "Disabled"
         [
-                "ignoredSpaces"   : pluginDataService.ignoredSpaces,
-                "monitoredGroups" : pluginDataService.monitoredGroups,
-                "email"           : pluginDataService.emailActive.toString(),
-                "permission"      : pluginDataService.permissionRemovalActive.toString(),
-                "receivers"       : pluginDataService.notificationReceivers,
-                "jobStatusBar"    : jobStatusBar,
-                "jobControlButton": jobControlButton,
-                "cron"            : auditJobCron
+                "ignoredSpaces"     : pluginDataService.ignoredSpaces,
+                "monitoredGroups"   : pluginDataService.monitoredGroups,
+                "email"             : pluginDataService.emailActive.toString(),
+                "permission"        : pluginDataService.permissionRemovalActive.toString(),
+                "receivers"         : pluginDataService.notificationReceivers,
+                "jobStatusBar"      : jobStatusBar,
+                "jobControlButton"  : jobControlButton,
+                "cron"              : pluginJobService.getCronExpression(AUDIT_JOB_KEY),
+                "averageRunningTime": pluginJobService.getAverageRunningTime(AUDIT_JOB_KEY),
+                "lastExecution"     : pluginJobService.getLastExecution(AUDIT_JOB_KEY),
+                "nextExecution"     : pluginJobService.getNextExecution(AUDIT_JOB_KEY)
         ]
     }
 
@@ -69,15 +73,6 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
     void runAuditJob() { pluginJobService.runJob(AUDIT_JOB_KEY) }
 
     @Override
-    String getAuditJobCron() { pluginJobService.getCronExpression(AUDIT_JOB_KEY)}
+    List<AuditReport> getAuditReportEntities() { pluginDataService.auditReportEntities }
 
-    @Override
-    Date updateAuditJobRepeatInterval(long repeatInterval) { pluginJobService.updateSimpleJobSchedule(AUDIT_JOB_KEY, repeatInterval) }
-
-    @Override
-    List getAuditReportAsList() {
-        pluginDataService.auditReportEntities.collect{
-            it.spaceKey + "," + it.group + "," + it.permission + "," + it.violator + "," + it.date
-        }
-    }
 }
