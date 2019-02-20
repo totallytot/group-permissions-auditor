@@ -17,6 +17,8 @@ interface PluginJobService {
 
     String getCronExpression(String jobKey)
 
+    Date updateCronExpression(String jobKey, String cron)
+
     long getAverageRunningTime(String jobKey)
 
     Date getLastExecution(String jobKey)

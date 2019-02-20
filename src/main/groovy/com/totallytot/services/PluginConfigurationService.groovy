@@ -14,6 +14,8 @@ interface PluginConfigurationService {
 
     void runAuditJob()
 
+    Date updateAuditJobCron(String cron)
+
     List<AuditReport> getAuditReportEntities()
 
 }

@@ -110,9 +110,24 @@ class Configuration extends HttpServlet {
         }
         else {
             //if no parameters are passed -> AJAX was triggered by "save" button
+            Date nextExecutionDate = null
             String jsonString = req.reader.lines().collect(Collectors.joining())
-            if (pluginConfigurationService.updateConfigDataFromJSON(jsonString)) resp.sendError(HttpServletResponse.SC_OK)
-            else resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+            if (jsonString.contains("cron")) {
+                def cron = jsonString.substring(jsonString.indexOf("cron")+7, jsonString.lastIndexOf('"'))
+                nextExecutionDate = pluginConfigurationService.updateAuditJobCron(cron)
+            }
+            if (!pluginConfigurationService.updateConfigDataFromJSON(jsonString))
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+            if (nextExecutionDate) {
+                def jsonBuilder = new JsonBuilder()
+                jsonBuilder {
+                    date(cron: nextExecutionDate.toString())
+                }
+                resp.setContentType("application/json")
+                resp.setCharacterEncoding("UTF-8")
+                resp.writer.write(jsonBuilder.toPrettyString())
+                resp.writer.close()
+            }
         }
     }
 }

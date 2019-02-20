@@ -73,6 +73,9 @@ class PluginConfigurationServiceImpl implements PluginConfigurationService {
     void runAuditJob() { pluginJobService.runJob(AUDIT_JOB_KEY) }
 
     @Override
+    Date updateAuditJobCron(String cron) { pluginJobService.updateCronExpression(AUDIT_JOB_KEY, cron) }
+
+    @Override
     List<AuditReport> getAuditReportEntities() { pluginDataService.auditReportEntities }
 
 }

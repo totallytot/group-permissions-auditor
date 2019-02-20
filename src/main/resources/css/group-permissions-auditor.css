@@ -1,9 +1,5 @@
-.field-group-audit  {
-    width: 650px;
-}
-
-#message-info-audit {
-    width: 750px;
+#message-info-audit, .field-group-audit  {
+    width: 700px;
 }
 
 #toggle-permission {
@@ -25,7 +21,7 @@
 }
 
 #audit-report{
-    width: 1000px;
+    width: 950px;
 }
 
 #job-info {

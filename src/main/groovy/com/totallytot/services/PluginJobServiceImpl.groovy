@@ -37,6 +37,11 @@ class PluginJobServiceImpl implements PluginJobService {
     String getCronExpression(String jobKey) { scheduledJobManager.getCronExpression(getScheduledJobKey(jobKey)) }
 
     @Override
+    Date updateCronExpression(String jobKey, String cron) {
+        scheduledJobManager.updateCronJobSchedule(getScheduledJobKey(jobKey), cron)
+    }
+
+    @Override
     long getAverageRunningTime(String jobKey) { getJobStatus(jobKey).averageRunningTime }
 
     @Override
