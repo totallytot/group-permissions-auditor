@@ -32,13 +32,11 @@
     <schedule cron-expression="0 0 0 * * ?" jitterSecs="10"/>
     <managed editable="true" keepingHistory="true" canRunAdhoc="true" canDisable="true"/>
   </job-config>
-  <servlet name="Configuration Servlet" i18n-name-key="configuration-servlet.name" key="configuration-servlet"
-           class="com.totallytot.servlet.Configuration">
+  <servlet name="Configuration Servlet" i18n-name-key="configuration-servlet.name" key="configuration-servlet" class="com.totallytot.servlet.Configuration">
     <description key="conf.description">Plugin Admin Servlet</description>
     <url-pattern>/groupaudit</url-pattern>
   </servlet>
-  <web-item name="AdminWebItem" i18n-name-key="admin-web-item.name" key="admin-web-item"
-            section="system.admin/configuration" weight="40">
+  <web-item name="AdminWebItem" i18n-name-key="admin-web-item.name" key="admin-web-item" section="system.admin/configuration" weight="40">
     <description key="admin-web-item.description">Link for Admin Servlet</description>
     <label key="Group Permissions Audit"/>
     <link linkId="admin-web-item-link">/plugins/servlet/groupaudit</link>
