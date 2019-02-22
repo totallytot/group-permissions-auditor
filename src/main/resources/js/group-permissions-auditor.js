@@ -68,42 +68,6 @@ AJS.toInit(function () {
         }
     });
 
-    //save button behaviour
-    AJS.$("#save-button").click(function (e) {
-        e.preventDefault();
-        var ignoredSpaces = AJS.$("#ignored-spaces").val();
-        var monitoredGroups = AJS.$("#monitored-groups").val();
-        if (ignoredSpaces === null || ignoredSpaces.length === 0 || monitoredGroups === null || monitoredGroups.length === 0) {
-            errorFlag('Please select spaces to be monitored and affected groups!')
-        }
-        else {
-            AJS.$.ajax({
-                url: AJS.contextPath() + "/plugins/servlet/groupaudit",
-                type: "POST",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(dataObject),
-                success: function (responseJson) {
-                    console.log("SUCCESS");
-                    console.log(JSON.stringify(dataObject));
-                    console.log(responseJson);
-                    AJS.$("#job-info > tbody > tr:nth-child(3) > td:nth-child(2)").text(responseJson.date.cron);
-                    AJS.flag({
-                        type: "success",
-                        body: "Audit Job has been configured.",
-                        close: "auto"
-                    });
-                    cleanDataObject();
-                },
-                error: function (err) {
-                    console.log("ERROR");
-                    console.log(err);
-                    errorFlag("Something went wrong! Check logs!");
-                    cleanDataObject();
-                }
-            });
-        }
-    });
 
     //enable/disable button behaviour + state
     var stateBtn = AJS.$("#state-button");
@@ -133,6 +97,43 @@ AJS.toInit(function () {
                 errorFlag("Something went wrong! Check logs!");
             }
         });
+    });
+
+    //save button behaviour
+    AJS.$("#save-button").click(function (e) {
+        e.preventDefault();
+        var ignoredSpaces = AJS.$("#ignored-spaces").val();
+        var monitoredGroups = AJS.$("#monitored-groups").val();
+        if (ignoredSpaces === null || ignoredSpaces.length === 0 || monitoredGroups === null || monitoredGroups.length === 0) {
+            errorFlag('Please select spaces to be monitored and affected groups!')
+        }
+        else {
+            AJS.$.ajax({
+                url: AJS.contextPath() + "/plugins/servlet/groupaudit",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(dataObject),
+                success: function (responseJson) {
+                    console.log("SUCCESS");
+                    console.log(JSON.stringify(dataObject));
+                    console.log(responseJson);
+                    if (responseJson !== null) AJS.$("#job-info > tbody > tr:nth-child(3) > td:nth-child(2)").text(responseJson.date.cron);
+                    AJS.flag({
+                        type: "success",
+                        body: "Audit Job has been configured.",
+                        close: "auto"
+                    });
+                    cleanDataObject();
+                },
+                error: function (err) {
+                    console.log("ERROR");
+                    console.log(err);
+                    errorFlag("Something went wrong! Check logs!");
+                    cleanDataObject();
+                }
+            });
+        }
     });
 
     //run now button behaviour

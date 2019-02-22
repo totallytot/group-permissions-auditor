@@ -66,18 +66,18 @@
 
 <table class="aui" id="job-info">
     <tbody>
-        <tr>
-            <td>Average Running Time</td>
-            <td>$averageRunningTime</td>
-        </tr>
-        <tr>
-            <td>Last Execution</td>
-            <td>$lastExecution</td>
-        </tr>
-        <tr>
-            <td>Next Execution</td>
-            <td>$nextExecution</td>
-        </tr>
+    <tr>
+        <td>Average Running Time</td>
+        <td>$averageRunningTime</td>
+    </tr>
+    <tr>
+        <td>Last Execution</td>
+        <td>$lastExecution</td>
+    </tr>
+    <tr>
+        <td>Next Execution</td>
+        <td>$nextExecution</td>
+    </tr>
     </tbody>
 </table>
 
@@ -87,23 +87,24 @@
     <button class="aui-button" id="report-button">Show Last Report</button>
 </div>
 
+<div class="aui-message aui-message-info" id="message-info-audit">
+    <strong>Please pay attention to the following bug related to scheduled jobs settings: </strong> <a
+        href="https://jira.atlassian.com/browse/CONFSERVER-55455">CONFSERVER-55455</a><br>
+</div>
+
 <table class="aui" id="audit-report">
     <thead>
-        <tr>
-            <th id="space-key">Space Key</th>
-            <th id="group">Group</th>
-            <th id="permission">Permission</th>
-            <th id="creator">Violator</th>
-            <th id="date">Date</th>
-        </tr>
+    <tr>
+        <th id="space-key">Space Key</th>
+        <th id="group">Group</th>
+        <th id="permission">Permission</th>
+        <th id="creator">Violator</th>
+        <th id="date">Date</th>
+    </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
 
-<div class="aui-message aui-message-info" id="message-info-audit">
-    <strong>Please pay attention to the following bug related to scheduled jobs settings: </strong> <a
-        href="https://jira.atlassian.com/browse/CONFSERVER-55455">CONFSERVER-55455</a><br>
-</div>
 </body>
 </html>
